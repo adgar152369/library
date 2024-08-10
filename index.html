@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="Book.js" defer></script>
+  <link rel="stylesheet" href="styles.css">
+  <title>My Library</title>
+</head>
+<body>
+  <h1>Restricted Section</h1>
+
+  <div>
+    <blockquote>
+      <p>“The more that you read, the more things you will know. The more that you learn, the more places you’ll go.”</p>
+      <cite>- Dr. Seuss</cite>
+    </blockquote>
+  </div>
+
+  <section class="addNewBookSection">
+    <button class="addBookBtn">Add a book</button>
+    <!-- <div class="backdrop"></div> -->
+    <dialog>
+      <button autofocus>X</button>
+      <form>
+        <fieldset>
+          <legend>Book Info</legend>
+          <p>
+            <label for="title">Book Title:</label>
+            <input type="text" name="title" id="title" required placeholder="Book title">
+          </p>
+          <p>
+            <label for="author">Author:</label>
+            <input type="text" name="author" id="author" required placeholder="Book author">
+          </p>
+          <p>
+            <label for="pages">Number of pages:</label>
+            <input type="number" name="pages" id="pages" required placeholder="# of pages">
+          </p>
+          <p>
+        </fieldset>
+          <fieldset>
+            <legend>Have you read this book?</legend>
+            <p>
+              <label for="yes">Yes</label>
+              <input type="radio" name="hasRead" value="yes" id="yes">
+            </p>
+            <p>
+              <label for="no">No</label>
+              <input type="radio" name="hasRead" value="no" id="no">
+            </p>
+          </fieldset>
+        </p>
+        <button id="addNewBookBtn" type="submit">Add Book</button>
+      </form>
+    </dialog>
+  </section>
+
+  <ul class="booksDisplay">
+
+  </ul>
+</body>
+</html>
