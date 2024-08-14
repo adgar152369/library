@@ -39,13 +39,34 @@ h1 {
   margin-block: 2rem;
 }
 
-ul {
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
+#book-list-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: solid 2px grey;
+}
+
+#book-list-table tfoot {
+  border-top: solid 1px rgb(198, 198, 198);;
+}
+
+#book-list-table tfoot th {
+  text-align: right;
+}
+
+#book-list-table th{
+  text-align: left;
+  border-bottom: solid 1px rgb(198, 198, 198);
+}
+
+#book-list-table thead th, 
+#book-list-table tbody td, 
+#book-list-table tfoot th, 
+#book-list-table tfoot td {
+  padding: 10px;
+}
+
+#book-list-table tbody tr:nth-child(odd){
+  background-color: rgb(221, 221, 221);
 }
 
 dialog {

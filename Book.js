@@ -1,203 +1,97 @@
-// Book model:
 /**
- * id: string,
- * title: string,
- * author: string,
- * pages: string,
- * hasRead: boolean
+ * class Book:
+ *  public title;
+ *  public author;
+ *  public pages;
+ *  public hasRead;
+ *  public isEditing;
+ *  private id;
+ *
+ *  // Accessors
+ *  get bookTitle(): this.title;
+ *  get bookAuthor(): this.author;
+ *  get numberOfPages(): this.pages;
+ *  get hasRead(): this.hasRead;
+ *  set hasRead(value): this.hasRead = value;
+ *  set isEditing(value): this.isEditing = value;
  */
 
-function Book(title, author, pages, hasRead) {
-  this.title = title;
-  this.author = author;
-  this.pages = pages;
-  this.hasRead = hasRead;
-  this.id = Math.floor(Math.random() * 100);
-  this.isEditing = false;
+class Book {
+  title = "";
+  author = "";
+  pages = 0;
+  hasRead = "";
+  id = Math.floor(Math.random() * 100);
 
-  this.info = function () {
-    return `${title} by ${author}, ${pages} pages, ${
-      hasRead ? "already read" : "not read yet"
-    }`;
-  };
+  constructor(title, author, pages, hasRead) {
+    this.title = title;
+    this.author = author;
+    this.pages = pages;
+    this.hasRead = hasRead;
+  }
 
-  this.toggleReadStatus = function () {
-    this.hasRead = !this.hasRead;
-  };
-
-  this.toggleEditing = function () {
-    this.isEditing = !this.isEditing;
-  };
-
-  this.editBook = function (
-    newTitle,
-    newAuthor,
-    newPages = this.pages,
-    newReadStatus = this.hasRead
-  ) {
-    this.title = newTitle;
-    this.author = newAuthor;
-    this.pages = newPages;
-    this.hasRead = newReadStatus;
-  };
+  get bookTitle() {
+    return this.title;
+  }
+  get bookAuthor() {
+    return this.author;
+  }
+  get numPages() {
+    return this.pages;
+  }
+  get hasReadStatus() {
+    return this.hasRead;
+  }
+  set hasReadStatus(value) {
+    this.hasRead = value;
+  }
+  set isEditing(value) {
+    this.isEditing = value;
+  }
 }
 
-// add toggle read status to Book prototype
-Book.prototype.toggleReadStatus = function () {
-  this.hasRead = !this.hasRead;
-};
-
-// store all book in an Array (a library)
 let myLibrary = [
   new Book("Harry Potter and The Sorcerer's Stone", "JK Rowling", 455, true),
   new Book("IT", "Stephen King", 677, false),
+  new Book("Lord of The Rings", "Tolkien", 1000, false),
+  new Book("Problem Solving in Code", "Unknown", 200, false),
 ];
 
-const bookTitle = document.querySelector("input#title");
-const bookAuthor = document.querySelector("input#author");
-const bookPages = document.querySelector("input#pages");
-const bookHasRead = document.getElementsByName("hasRead");
-const addNewBookBtn = document.querySelector("#addNewBookBtn");
-const booksDisplay = document.querySelector(".booksDisplay");
-const addBookBtn = document.querySelector(".addBookBtn");
-const newBookDialog = document.querySelector("dialog");
-const newBookForm = document.querySelector("dialog form");
-const newBookFormCloseBtn = document.querySelector("dialog button");
+class BookUI {
 
-addBookBtn.addEventListener("click", () => {
-  newBookForm.reset();
-  newBookDialog.showModal();
-});
+  static displayBooks() {
+    const bookList = document.querySelector("#book-list-table");
+    const bookListFooter = document.querySelector("#table-footer");
+    let bookReadCount = myLibrary.reduce((sum, book) => {
+      if (book.hasRead) {
+      return sum + 1;
+      } else {
+      return sum;
+      }
+    }, 0);
 
-newBookFormCloseBtn.addEventListener("click", () => newBookDialog.close());
-addNewBookBtn.addEventListener("click", (e) => onAddBook(e));
+    myLibrary.forEach((book) => {
+      let tableBody = bookList.querySelector("tbody");
 
-function displayBooks() {
-  if (myLibrary.length === 0) {
-    booksDisplay.innerHTML = "<p>No books to display.</p>";
-  } else {
-    booksDisplay.innerHTML = "";
-
-    for (let i = 0; i < myLibrary.length; i++) {
-      const book = myLibrary[i];
-      const bookElement = document.createElement("li");
-      bookElement.className = "book-item";
-      bookElement.setAttribute("data-book-id", book.id);
-      bookElement.innerHTML = `
-        <h2 class="title">${book.title}</h2>
-        <p class="author">${book.author}</p>
-        ${book.hasRead ? "<p class='hasRead'>&check; Have read</p>" : ""}
-        <div>
-          <button class="hasReadToggle toggle">${
-            book.hasRead ? "Unread" : "Read"
-          }</button>
-          <button class="deleteBookBtn delete">Delete</button>
-        </div>
-        <hr>
+      tableBody.innerHTML += `
+        <tr>
+          <td scope="col">${book.title}</td>
+          <td scope="col">${book.author}</td>
+          <td scope="col">${book.pages}</td>
+          <td scope="col">${book.hasRead}</td>
+        </tr>
       `;
-      booksDisplay.appendChild(bookElement);
-    }
-
-    selectButtons();
+    });
+    bookListFooter.innerHTML = `
+      <tr>
+        <th scope="row" colspan="3">
+          Books Read
+          <td>${((bookReadCount / myLibrary.length) * 100).toFixed(2)}%</td>
+        </th>
+      </tr>`;
   }
 }
 
-function selectButtons() {
-  // const editBookBtns = document.querySelectorAll(".editBookBtn");
-  const deleteBookBtns = document.querySelectorAll(".deleteBookBtn");
-  const hasReadToggleBtns = document.querySelectorAll(".hasReadToggle");
-
-  hasReadToggleBtns.forEach((btn) => {
-    btn.addEventListener("click", (e) => onToggleReadStatus(e));
-  });
-  deleteBookBtns.forEach((btn) => {
-    btn.addEventListener("click", (e) => onRemoveBook(e));
-  });
-}
-
-function onToggleReadStatus(e) {
-  let bookToToggleReadStatus = e.target.parentElement.parentElement;
-  let bookId = bookToToggleReadStatus.dataset.bookId;
-
-  const book = myLibrary.find((book) => book.id == bookId);
-  book.toggleReadStatus();
-
-  displayBooks();
-}
-
-// LATER
-function openEditBookDialog(e) {
-  const book = myLibrary.find((book) => book.id == e.target.parentElement.parentElement.getAttribute('data-book-id'));
-  const editBookDialog = document.createElement("dialog");
-  editBookDialog.innerHTML = `
-    <button autofocus>X</button>
-    <form>
-      <fieldset>
-        <p>
-          <label for="title">Book Title:</label>
-          <input type="text" name="title" id="title" value="${book.title}" placeholder="Book title">
-        </p>
-        <p>
-          <label for="author">Author:</label>
-          <input type="text" name="author" id="author" value="${book.author}" placeholder="Book author">
-        </p>
-        <p>
-          <label for="pages">Number of pages:</label>
-          <input type="number" name="pages" id="pages" value="${book.pages}" placeholder="# of pages">
-        </p>
-        <p>
-      </fieldset>
-        <fieldset>
-          <legend>Have you read this book?</legend>
-          <p>
-            <label for="yes">Yes</label>
-            <input type="radio" name="hasRead" value="yes" id="yes">
-          </p>
-          <p>
-            <label for="no">No</label>
-            <input type="radio" name="hasRead" value="no" id="no">
-          </p>
-        </fieldset>
-      </p>
-      <button id="saveBookBtn" type="submit">Save</button>
-    </form>
-  `;
-
-  document.body.appendChild(editBookDialog);
-
-  editBookDialog.showModal();
-}
-// END LATER
-
-function onRemoveBook(e) {
-  const bookToRemove = e.target.parentElement.parentElement;
-  const bookId = bookToRemove.getAttribute("data-book-id");
-  myLibrary = myLibrary.filter((book) => book.id != bookId);
-
-  displayBooks();
-}
-
-function onAddBook(e) {
-  e.preventDefault();
-
-  let title = bookTitle.value;
-  let author = bookAuthor.value;
-  let pages = bookPages.value;
-  let hasReadValue = false;
-
-  for (let i = 0; i < Array.from(bookHasRead).length; i++) {
-    const element = Array.from(bookHasRead)[i];
-    if (element.checked && element.value === "yes") {
-      hasReadValue = true;
-    }
-  }
-
-  const newBook = new Book(title, author, pages, hasReadValue);
-  myLibrary.push(newBook);
-
-  newBookDialog.close();
-
-  displayBooks();
-}
-
-displayBooks();
+document.addEventListener("DOMContentLoaded", () => {
+  BookUI.displayBooks();
+});
