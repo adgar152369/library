@@ -34,7 +34,7 @@ div:has(blockquote) {
   max-width: 75%;
 }
 
-h1 {
+h1, h3 {
   text-align: center;
   margin-block: 2rem;
 }
@@ -46,14 +46,13 @@ h1 {
 }
 
 /* book-item */
-
 #book-list-table tbody .book-item:nth-child(odd) {
   background-color: rgb(221, 221, 221);
 }
 
 #book-list-table tbody .book-item:hover {
   cursor: pointer;
-  outline: solid 1px coral;
+  outline: solid 2px coral;
 }
 
 #book-list-table tfoot {

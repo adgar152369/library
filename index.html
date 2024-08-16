@@ -19,7 +19,61 @@
 
   <section class="addNewBookSection">
     <button class="addBookBtn">Add Book</button>
-    <!-- <div class="backdrop"></div> -->
+    <dialog class="add-book-dialog">
+      <button class="close-dialog" autofocus>Cancel</button>
+      <h3>Add a New Book</h3>
+      <form>
+        <fieldset>
+          <legend>Book Info</legend>
+          <p>
+            <label for="new-title">Book Title:</label>
+            <input type="text" name="new-title" id="new-title" required placeholder="Book title">
+          </p>
+          <p>
+            <label for="new-author">Author:</label>
+            <input type="text" name="new-author" id="new-author" required placeholder="Book author">
+          </p>
+          <p>
+            <label for="new-pages">Number of pages:</label>
+            <input type="number" name="new-pages" id="new-pages" required placeholder="# of pages">
+          </p>
+          <p>
+        </fieldset>
+          <fieldset>
+            <legend>Have you read this book?</legend>
+            <p>
+              <label for="yes">Yes</label>
+              <input type="radio" name="hasRead" value="yes" id="yes">
+            </p>
+            <p>
+              <label for="no">No</label>
+              <input type="radio" name="hasRead" value="no" id="no">
+            </p>
+          </fieldset>
+        </p>
+        <button id="saveEditBook" type="submit">Save</button>
+      </form>
+    </dialog>
+  </section>
+  
+  <ul class="booksDisplay" id="book-list">
+    
+  </ul>
+  
+  <table class="booksDisplay" id="book-list-table">
+    <thead>
+      <tr>
+        <th scope="col">Title</th>
+        <th scope="col">Author</th>
+        <th scope="col">Pages</th>
+        <th scope="col">Read</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+    <tfoot id="table-footer"></tfoot>
+  </table>
+  
+  <section>
     <dialog class="edit-book-dialog">
       <button class="close-dialog" autofocus>Cancel</button>
       <form>
@@ -55,22 +109,5 @@
       </form>
     </dialog>
   </section>
-
-  <ul class="booksDisplay" id="book-list">
-    
-  </ul>
-
-  <table class="booksDisplay" id="book-list-table">
-    <thead>
-      <tr>
-        <th scope="col">Title</th>
-        <th scope="col">Author</th>
-        <th scope="col">Pages</th>
-        <th scope="col">Read</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-    <tfoot id="table-footer"></tfoot>
-  </table>
 </body>
 </html>

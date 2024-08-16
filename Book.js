@@ -62,6 +62,12 @@ let myLibrary = [
 ];
 
 class BookUI {
+  
+  constructor() {
+    const addBookBtn = document.querySelector('.addBookBtn');
+    addBookBtn.addEventListener('click', BookUI.addNewBook);
+  }
+
   static displayBooks() {
     const bookList = document.querySelector("#book-list-table");
     const bookListFooter = document.querySelector("#table-footer");
@@ -80,32 +86,74 @@ class BookUI {
       tableBody.innerHTML = "";
     }
     myLibrary.forEach((book) => {
-      tableBody.innerHTML += `
-        <tr class="book-item" data-id=${book.id}>
-          <td scope="col">${book.title}</td>
-          <td scope="col">${book.author}</td>
-          <td scope="col">${book.pages}</td>
-          <td scope="col">${book.hasRead}</td>
-        </tr>
-      `;
+      tableBody.innerHTML += BookUI.createBookTableRow(book);
     });
-    bookListFooter.innerHTML = `
+    bookListFooter.innerHTML = BookUI.createBookTableFooter(bookReadCount);
+
+    // add event listener to books
+    const booksEls = tableBody.querySelectorAll("tr");
+    booksEls.forEach((bookEl) => {
+      bookEl.addEventListener("click", (e) => BookUI.openEditBookDialog(e.target));
+    });
+  }
+
+  static addNewBook() {
+    // get DOM elements
+    const addNewBookDialog = document.querySelector('.add-book-dialog');
+    const addNewBookSubmit = document.querySelector('.add-book-dialog form');
+    const closeDialogBtn = document.querySelector('.close-dialog');
+    const allInputs = document.querySelectorAll('.add-book-dialog input');
+
+    // create close event listener for dialog
+    addNewBookDialog.showModal();
+    closeDialogBtn.addEventListener('click', () => addNewBookDialog.close());
+
+    // clear all inputs
+    allInputs.forEach((input) => {
+      input.value = '';
+      input.checked = false;
+    });
+
+    // create and push book to myLibrary
+    addNewBookSubmit.addEventListener('submit', (e) => {
+      e.preventDefault();
+      let bookTitle, bookAuthor, bookPages, bookHasRead;
+      allInputs.forEach((input) => {
+      if (input.id === 'new-title') {
+        bookTitle = input.value;
+      } else if (input.id === 'new-author') {
+        bookAuthor = input.value;
+      } else if (input.id === 'new-pages') {
+        bookPages = parseInt(input.value);
+      } else if (input.type === 'radio' && input.checked) {
+        bookHasRead = input.value === 'yes';
+      }
+      });
+      myLibrary.push(new Book(bookTitle, bookAuthor, bookPages, bookHasRead));
+      addNewBookDialog.close();
+      BookUI.displayBooks();
+    });
+  }
+
+  static createBookTableRow(book) {
+    return `
+      <tr class="book-item" data-id=${book.id}>
+        <td scope="col">${book.bookTitle}</td>
+        <td scope="col">${book.bookAuthor}</td>
+        <td scope="col">${book.numPages}</td>
+        <td scope="col">${book.hasReadStatus}</td>
+      </tr>
+    `;
+  }
+
+  static createBookTableFooter(bookReadCount) {
+    return `
       <tr>
         <th scope="row" colspan="3">
           Books Read
           <td>${((bookReadCount / myLibrary.length) * 100).toFixed(2)}%</td>
         </th>
       </tr>`;
-
-    // add event listener to books
-    const booksEls = tableBody.querySelectorAll("tr");
-    booksEls.forEach((bookEl) => {
-      bookEl.addEventListener("click", (e) => BookUI.editBook(e));
-    });
-  }
-
-  static editBook(e) {
-    BookUI.openEditBookDialog(e.target);
   }
 
   static openEditBookDialog(bookToEdit) {
@@ -120,7 +168,7 @@ class BookUI {
     let bookTitleInput = document.querySelector("input#title");
     let bookAuthorInput = document.querySelector("input#author");
     let bookPagesInput = document.querySelector("input#pages");
-    let bookHasReadInput = document.querySelectorAll('input[type="radio"]');  
+    let bookHasReadInput = document.querySelectorAll('input[type="radio"]');
     let bookHasRead = bookToEdit.parentElement.children[3].innerText;
     const bookId = bookToEdit.parentElement.getAttribute("data-id");
     // prefill inputs
@@ -134,7 +182,6 @@ class BookUI {
       }
     });
 
-    
     // create new book and replace in myLibrary array
     editForm.addEventListener("submit", (e) => {
       e.preventDefault();
@@ -160,5 +207,6 @@ class BookUI {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+  new BookUI();
   BookUI.displayBooks();
 });
