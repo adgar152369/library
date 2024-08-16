@@ -1,56 +1,10 @@
-/**
- * class Book:
- *  public title;
- *  public author;
- *  public pages;
- *  public hasRead;
- *  public isEditing;
- *  private id;
- *
- *  // Accessors
- *  get bookTitle(): this.title;
- *  get bookAuthor(): this.author;
- *  get numberOfPages(): this.pages;
- *  get hasRead(): this.hasRead;
- *  set hasRead(value): this.hasRead = value;
- *  set isEditing(value): this.isEditing = value;
- */
-
 class Book {
-  title = "";
-  author = "";
-  pages = 0;
-  hasRead = "";
-  id = Math.random().toString(36).substr(2, 9);
-
   constructor(title, author, pages, hasRead) {
     this.title = title;
     this.author = author;
     this.pages = pages;
-    this.hasReadStatus = hasRead;
-  }
-
-  get bookTitle() {
-    return this.title;
-  }
-  get bookAuthor() {
-    return this.author;
-  }
-  get numPages() {
-    return this.pages;
-  }
-  get hasReadStatus() {
-    return this.hasRead;
-  }
-  set hasReadStatus(value) {
-    if (value === true) {
-      this.hasRead = "Yes";
-    } else {
-      this.hasRead = "No";
-    }
-  }
-  set isEditing(value) {
-    this.isEditing = value;
+    this.hasRead = hasRead ? "Yes" : "No";
+    this.id = Math.random().toString(36).substr(2, 9);
   }
 }
 
@@ -62,70 +16,56 @@ let myLibrary = [
 ];
 
 class BookUI {
-  
   constructor() {
-    const addBookBtn = document.querySelector('.addBookBtn');
-    const addNewBookSubmit = document.querySelector('.add-book-dialog form');
+    this.addBookBtn = document.querySelector('.addBookBtn');
+    this.addNewBookDialog = document.querySelector('.add-book-dialog');
+    this.closeDialogBtn = document.querySelector('.close-dialog');
+    this.allInputs = document.querySelectorAll('.add-book-dialog input');
+    this.bookList = document.querySelector("#book-list-table");
+    this.bookListFooter = document.querySelector("#table-footer");
 
-    addBookBtn.addEventListener('click', BookUI.openNewBookDialog);
-    addNewBookSubmit.addEventListener('submit', (e) => {
-      e.preventDefault();
-      BookUI.handleNewBookSubmit();
+    this.addBookBtn.addEventListener('click', this.addNewBook.bind(this));
+    this.addNewBookDialog.querySelector('form').addEventListener('submit', this.handleNewBookSubmit.bind(this));
+    this.closeDialogBtn.addEventListener('click', () => this.addNewBookDialog.close());
+
+    document.addEventListener("DOMContentLoaded", () => {
+      this.displayBooks();
     });
   }
 
-  static displayBooks() {
-    const bookList = document.querySelector("#book-list-table");
-    const bookListFooter = document.querySelector("#table-footer");
-    let bookReadCount = myLibrary.reduce((sum, book) => {
-      if (book.hasRead === "Yes") {
-        return sum + 1;
-      } else {
-        return sum;
-      }
-    }, 0);
+  displayBooks() {
+    const tableBody = this.bookList.querySelector("tbody");
+    tableBody.innerHTML = ""; // Clear the table body
 
-    // create book table html
-    let tableBody = bookList.querySelector("tbody");
-    // Clear the table body if it is not empty
-    if (tableBody.hasChildNodes()) {
-      tableBody.innerHTML = "";
-    }
+    let bookReadCount = 0;
     myLibrary.forEach((book) => {
-      tableBody.innerHTML += BookUI.createBookTableRow(book);
+      tableBody.innerHTML += this.createBookTableRow(book);
+      if (book.hasRead === "Yes") bookReadCount++;
     });
-    bookListFooter.innerHTML = BookUI.createBookTableFooter(bookReadCount);
 
-    // add event listener to books
-    const booksEls = tableBody.querySelectorAll("tr");
-    booksEls.forEach((bookEl) => {
-      bookEl.addEventListener("click", (e) => BookUI.openEditBookDialog(e.target));
+    this.bookListFooter.innerHTML = this.createBookTableFooter(bookReadCount);
+
+    // Use event delegation for book item clicks
+    tableBody.addEventListener("click", (e) => {
+      if (e.target.closest('.book-item')) {
+        this.openEditBookDialog(e.target.closest('.book-item'));
+      }
     });
   }
 
-  static openNewBookDialog() {
-    // get DOM elements
-    const addNewBookDialog = document.querySelector('.add-book-dialog');
-    const closeDialogBtn = document.querySelector('.close-dialog');
-    const allInputs = document.querySelectorAll('.add-book-dialog input');
-    
-    // create close event listener for dialog
-    addNewBookDialog.showModal();
-    closeDialogBtn.addEventListener('click', () => addNewBookDialog.close());
-  
-    // clear all inputs
-    allInputs.forEach((input) => {
+  addNewBook() {
+    this.addNewBookDialog.showModal();
+    this.allInputs.forEach((input) => {
       input.value = '';
       input.checked = false;
     });
   }
 
-  static handleNewBookSubmit() {
-    const addNewBookDialog = document.querySelector('.add-book-dialog');
-    const allInputs = document.querySelectorAll('.add-book-dialog input');
-    
+  handleNewBookSubmit(e) {
+    e.preventDefault();
+
     let bookTitle, bookAuthor, bookPages, bookHasRead;
-    allInputs.forEach((input) => {
+    this.allInputs.forEach((input) => {
       if (input.id === 'new-title') {
         bookTitle = input.value;
       } else if (input.id === 'new-author') {
@@ -136,23 +76,24 @@ class BookUI {
         bookHasRead = input.value === 'yes';
       }
     });
+
     myLibrary.push(new Book(bookTitle, bookAuthor, bookPages, bookHasRead));
-    addNewBookDialog.close();
-    BookUI.displayBooks();
+    this.addNewBookDialog.close();
+    this.displayBooks();
   }
 
-  static createBookTableRow(book) {
+  createBookTableRow(book) {
     return `
       <tr class="book-item" data-id=${book.id}>
-        <td scope="col">${book.bookTitle}</td>
-        <td scope="col">${book.bookAuthor}</td>
-        <td scope="col">${book.numPages}</td>
-        <td scope="col">${book.hasReadStatus}</td>
+        <td scope="col">${book.title}</td>
+        <td scope="col">${book.author}</td>
+        <td scope="col">${book.pages}</td>
+        <td scope="col">${book.hasRead}</td>
       </tr>
     `;
   }
 
-  static createBookTableFooter(bookReadCount) {
+  createBookTableFooter(bookReadCount) {
     return `
       <tr>
         <th scope="row" colspan="3">
@@ -162,7 +103,7 @@ class BookUI {
       </tr>`;
   }
 
-  static openEditBookDialog(bookToEdit) {
+  openEditBookDialog(bookToEdit) {
     const editBookDialog = document.querySelector(".edit-book-dialog");
     editBookDialog.showModal();
     const closeEditBookDialog = editBookDialog.querySelector(".close-dialog");
@@ -170,49 +111,41 @@ class BookUI {
 
     closeEditBookDialog.addEventListener("click", () => editBookDialog.close());
 
-    // fill in dialog inputs
-    let bookTitleInput = document.querySelector("input#title");
-    let bookAuthorInput = document.querySelector("input#author");
-    let bookPagesInput = document.querySelector("input#pages");
-    let bookHasReadInput = document.querySelectorAll('input[type="radio"]');
-    let bookHasRead = bookToEdit.parentElement.children[3].innerText;
-    const bookId = bookToEdit.parentElement.getAttribute("data-id");
-    // prefill inputs
-    bookTitleInput.value = Array.from(bookToEdit.parentElement.children)[0].innerText;
-    bookAuthorInput.value = Array.from(bookToEdit.parentElement.children)[1].innerText;
-    bookPagesInput.value = Array.from(bookToEdit.parentElement.children)[2].innerText;
-    bookHasReadInput.forEach((book) => {
-      book.checked = false;
-      if (book.value === bookHasRead.toLowerCase()) {
-        book.checked = true;
-      }
+    const bookTitleInput = document.querySelector("input#title");
+    const bookAuthorInput = document.querySelector("input#author");
+    const bookPagesInput = document.querySelector("input#pages");
+    const bookHasReadInput = document.querySelectorAll('input[type="radio"]');
+    const bookHasRead = bookToEdit.querySelector('td:nth-child(4)').innerText;
+    const bookId = bookToEdit.getAttribute("data-id");
+
+    bookTitleInput.value = bookToEdit.querySelector('td:nth-child(1)').innerText;
+    bookAuthorInput.value = bookToEdit.querySelector('td:nth-child(2)').innerText;
+    bookPagesInput.value = bookToEdit.querySelector('td:nth-child(3)').innerText;
+    bookHasReadInput.forEach((input) => {
+      input.checked = input.value === bookHasRead.toLowerCase();
     });
 
-    // create new book and replace in myLibrary array
     editForm.addEventListener("submit", (e) => {
       e.preventDefault();
       editBookDialog.close();
-      let bookHasReadInputValue = Array.from(bookHasReadInput).find((book) => book.checked);
 
-      myLibrary = myLibrary.map((book, i) => {
-        if (book && book.id == bookId) {
+      const bookHasReadInputValue = Array.from(bookHasReadInput).find((input) => input.checked).value;
+
+      myLibrary = myLibrary.map((book) => {
+        if (book.id === bookId) {
           return new Book(
             bookTitleInput.value,
             bookAuthorInput.value,
             parseInt(bookPagesInput.value),
-            bookHasReadInputValue.value === "yes"
+            bookHasReadInputValue === "yes"
           );
-        } else {
-          return book;
         }
+        return book;
       });
 
-      BookUI.displayBooks();
+      this.displayBooks();
     });
   }
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  new BookUI();
-  BookUI.displayBooks();
-});
+new BookUI();
