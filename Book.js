@@ -65,7 +65,13 @@ class BookUI {
   
   constructor() {
     const addBookBtn = document.querySelector('.addBookBtn');
-    addBookBtn.addEventListener('click', BookUI.addNewBook);
+    const addNewBookSubmit = document.querySelector('.add-book-dialog form');
+
+    addBookBtn.addEventListener('click', BookUI.openNewBookDialog);
+    addNewBookSubmit.addEventListener('submit', (e) => {
+      e.preventDefault();
+      BookUI.handleNewBookSubmit();
+    });
   }
 
   static displayBooks() {
@@ -97,28 +103,29 @@ class BookUI {
     });
   }
 
-  static addNewBook() {
+  static openNewBookDialog() {
     // get DOM elements
     const addNewBookDialog = document.querySelector('.add-book-dialog');
-    const addNewBookSubmit = document.querySelector('.add-book-dialog form');
     const closeDialogBtn = document.querySelector('.close-dialog');
     const allInputs = document.querySelectorAll('.add-book-dialog input');
-
+    
     // create close event listener for dialog
     addNewBookDialog.showModal();
     closeDialogBtn.addEventListener('click', () => addNewBookDialog.close());
-
+  
     // clear all inputs
     allInputs.forEach((input) => {
       input.value = '';
       input.checked = false;
     });
+  }
 
-    // create and push book to myLibrary
-    addNewBookSubmit.addEventListener('submit', (e) => {
-      e.preventDefault();
-      let bookTitle, bookAuthor, bookPages, bookHasRead;
-      allInputs.forEach((input) => {
+  static handleNewBookSubmit() {
+    const addNewBookDialog = document.querySelector('.add-book-dialog');
+    const allInputs = document.querySelectorAll('.add-book-dialog input');
+    
+    let bookTitle, bookAuthor, bookPages, bookHasRead;
+    allInputs.forEach((input) => {
       if (input.id === 'new-title') {
         bookTitle = input.value;
       } else if (input.id === 'new-author') {
@@ -128,11 +135,10 @@ class BookUI {
       } else if (input.type === 'radio' && input.checked) {
         bookHasRead = input.value === 'yes';
       }
-      });
-      myLibrary.push(new Book(bookTitle, bookAuthor, bookPages, bookHasRead));
-      addNewBookDialog.close();
-      BookUI.displayBooks();
     });
+    myLibrary.push(new Book(bookTitle, bookAuthor, bookPages, bookHasRead));
+    addNewBookDialog.close();
+    BookUI.displayBooks();
   }
 
   static createBookTableRow(book) {
