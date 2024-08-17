@@ -66,6 +66,8 @@ function displayBooks(library) {
 
   // create book table elements for tbody
   for (let bookData of library.getBooks()) {
+    console.log(bookData);
+    
     const bookRow = document.createElement("tr");
     bookRow.classList.add("book-item");
     bookRow.setAttribute("data-id", bookData.id);
@@ -103,7 +105,7 @@ function openBookDialog(book, element, library) {
   const bookDialogHeader = document.querySelector('.book-dialog h3');
   const bookDialogClose = document.querySelector('.close-dialog');
   const bookDialogInputs = document.querySelectorAll('.book-dialog input:not([type="radio"])');
-  const bookDialogRadios = document.querySelectorAll('.book-dialog input[type="radio"]');
+  // const bookDialogRadios = document.querySelectorAll('.book-dialog input[type="radio"]');
   const bookDialogBtns = document.querySelector('.action-btns');
   const bookDialogContainer = document.querySelector('#dialog-container');
 
@@ -124,9 +126,11 @@ function openBookDialog(book, element, library) {
     input.required = true;
   });
   
-  form.removeEventListener('submit', submitNewBookForm)
+  // form.removeEventListener('submit', submitNewBookForm)
 
   if (element.nodeName !== "BUTTON") {
+    console.log(book);
+    
     // set isEditing to true
     book.setIsEditing(true);
     
@@ -155,9 +159,7 @@ function openBookDialog(book, element, library) {
     });
 
     // check if deleteBookBtn exists
-    const deleteBookBtn = document.querySelector('.deleteBookBtn');
-    // const readStatusBtn = document.querySelector('.readStatusBtn');
-    
+    const deleteBookBtn = document.querySelector('.deleteBookBtn');    
     
     if (deleteBookBtn) {
       deleteBookBtn.addEventListener('click', (e) => {
@@ -200,10 +202,6 @@ function deleteBook(book, library) {
 }
 
 function submitNewBookForm(book, library, bookInputs, bookDialog) {
-  console.log(book);
-
-
-  
   const bookDialogRadioInputs = document.querySelectorAll('.book-dialog input[type="radio"]');
   const radioChecked = Array.from(bookDialogRadioInputs).find((radio) => radio.checked);
 
@@ -212,17 +210,13 @@ function submitNewBookForm(book, library, bookInputs, bookDialog) {
     if (existingBookIndex && existingBookIndex !== -1) {
       const updatedBooks = library.getBooks().map(existingBook => {
         if (existingBook.id === book.id) {
-          return {
-            ...existingBook,
-            title: bookInputs[0].value,
-            author: bookInputs[1].value,
-            pages: parseInt(bookInputs[2].value),
-            hasRead: radioChecked.value === "yes"
-          };
+          existingBook.title = bookInputs[0].value;
+          existingBook.author = bookInputs[1].value;
+          existingBook.pages = parseInt(bookInputs[2].value);
+          existingBook.hasRead = radioChecked.value === "yes";
         }
         return existingBook;
       });
-      library.books = updatedBooks;
       displayBooks(library);
       bookDialog.close();
       return;
