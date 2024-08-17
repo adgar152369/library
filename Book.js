@@ -173,8 +173,8 @@ function openBookDialog(book, element, library) {
       e.preventDefault();
       book.setIsEditing(false);
       bookDialog.close();
+      return;
     }, { once: true });
-    return;
   }
   else {
     bookDialogHeader.textContent = "Add new book";
