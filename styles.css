@@ -66,6 +66,7 @@ h1, h3 {
 #book-list-table th{
   text-align: left;
   border-bottom: solid 1px rgb(198, 198, 198);
+  color: coral;
 }
 
 #book-list-table thead th, 
@@ -218,5 +219,11 @@ button#saveEditBook {
   background: none;
   color: red;
   border: solid 2px red;
+  width: 25%;
+}
+.action-btns .readStatusBtn {
+  background: none;
+  color: teal;
+  border: solid 2px teal;
   width: 25%;
 }
