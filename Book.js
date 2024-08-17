@@ -25,6 +25,12 @@ function Book(title, author, pages, hasRead) {
 Library.prototype.addBook = function(book) {
   this.books.push(book);
 }
+Library.prototype.deleteBook = function(book) {
+  const index = this.books.indexOf(book);
+  if (index !== -1) {
+    this.books.splice(index, 1);
+  }
+}
 
 Library.prototype.getBooks = function() {
   return this.books;
@@ -123,7 +129,7 @@ function openBookDialog(book, element, library) {
     // set isEditing to true
     book.setIsEditing(true);
     
-    bookDialogBtns.innerHTML = "<button>Save</button>";
+    bookDialogBtns.innerHTML = "<button>Save</button><button class='deleteBookBtn'>Delete</button>";
     bookDialogHeader.textContent = "Edit book";
     bookDialog.showModal();
 
@@ -143,6 +149,16 @@ function openBookDialog(book, element, library) {
           break;
       }
     });
+
+    // check if deleteBookBtn exists
+    const deleteBookBtn = document.querySelector('.deleteBookBtn');
+    if (deleteBookBtn) {
+      deleteBookBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        bookDialog.close();
+        deleteBook(book, library);
+      });
+    }
 
     // TODO: save book
     // Close dialog without saving
@@ -167,10 +183,12 @@ function openBookDialog(book, element, library) {
   });
 }
 
+function deleteBook(book, library) {
+  library.deleteBook(book);
+  displayBooks(library);
+}
 function submitNewBookForm(e, library, bookInputs, bookDialog) {
   e.preventDefault();
-
-  console.log(e.target)
   const bookDialogRadioInputs = document.querySelectorAll('.book-dialog input[type="radio"]');
   const radioChecked = Array.from(bookDialogRadioInputs).find((radio) => radio.checked);
 
