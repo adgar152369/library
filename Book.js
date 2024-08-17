@@ -42,12 +42,6 @@ Book.prototype.setIsEditing = function(value) {
 
 const loadUserLibrary = (() => {
   const myLibrary = new Library();
-  
-  // const book1 = new Book("Harry Potter and the Sorcerer's Stone", 'JK Rowling', 200, true);
-  // const book2 = new Book("IT", 'Stephen King', 500, false);
-  // // add books to library
-  // myLibrary.addBook(book1);
-  // myLibrary.addBook(book2);
 
   // display the UI
   document.addEventListener("DOMContentLoaded", () => {
@@ -65,9 +59,7 @@ function displayBooks(library) {
   bookTable.innerHTML = "";
 
   // create book table elements for tbody
-  for (let bookData of library.getBooks()) {
-    console.log(bookData);
-    
+  for (let bookData of library.getBooks()) {    
     const bookRow = document.createElement("tr");
     bookRow.classList.add("book-item");
     bookRow.setAttribute("data-id", bookData.id);
@@ -126,11 +118,7 @@ function openBookDialog(book, element, library) {
     input.required = true;
   });
   
-  // form.removeEventListener('submit', submitNewBookForm)
-
-  if (element.nodeName !== "BUTTON") {
-    console.log(book);
-    
+  if (element.nodeName !== "BUTTON") {    
     // set isEditing to true
     book.setIsEditing(true);
     
@@ -242,6 +230,5 @@ function handleAddBook(bookToAdd, library) {
 
 function handleReadStatus(book, library) {
   book.hasRead = !book.hasRead;
-  console.log(book)
   displayBooks(library);
 }
