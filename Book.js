@@ -43,11 +43,11 @@ Book.prototype.setIsEditing = function(value) {
 const loadUserLibrary = (() => {
   const myLibrary = new Library();
   
-  const book1 = new Book("Harry Potter and the Sorcerer's Stone", 'JK Rowling', 200, true);
-  const book2 = new Book("IT", 'Stephen King', 500, false);
-  // add books to library
-  myLibrary.addBook(book1);
-  myLibrary.addBook(book2);
+  // const book1 = new Book("Harry Potter and the Sorcerer's Stone", 'JK Rowling', 200, true);
+  // const book2 = new Book("IT", 'Stephen King', 500, false);
+  // // add books to library
+  // myLibrary.addBook(book1);
+  // myLibrary.addBook(book2);
 
   // display the UI
   document.addEventListener("DOMContentLoaded", () => {
