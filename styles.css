@@ -175,8 +175,8 @@ button.toggle:hover {
 }
 
 button#saveEditBook {
-  width: 50%;
-  margin: auto;
+  width: 75%;
+  /* margin: auto; */
   display: block;
 }
 
@@ -207,4 +207,16 @@ button#saveEditBook {
   dialog {
     width: 400px;
   }
+}
+
+.action-btns {
+  display: flex;
+  gap: 2rem;
+}
+
+.action-btns .deleteBookBtn {
+  background: none;
+  color: red;
+  border: solid 2px red;
+  width: 25%;
 }

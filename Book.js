@@ -1,151 +1,191 @@
-class Book {
-  constructor(title, author, pages, hasRead) {
-    this.title = title;
-    this.author = author;
-    this.pages = pages;
-    this.hasRead = hasRead ? "Yes" : "No";
-    this.id = Math.random().toString(36).substr(2, 9);
-  }
+/**
+ * class Book:
+ *  public title;
+ *  public author;
+ *  public pages;
+ *  public hasRead;
+ *  public isEditing;
+ *  private id;
+ */
+
+function Library() {
+  this.books = [];
 }
 
-let myLibrary = [
-  new Book("Harry Potter and The Sorcerer's Stone", "JK Rowling", 455, true),
-  new Book("IT", "Stephen King", 677, false),
-  new Book("Lord of The Rings", "Tolkien", 1000, false),
-  new Book("Problem Solving in Code", "Unknown", 200, false),
-];
+function Book(title, author, pages, hasRead) {
+  this.title = title;
+  this.author = author;
+  this.pages = pages;
+  this.hasRead = hasRead ? "Yes" : "No";
+  this.isEditing = false;
+  this.id = Math.random().toString(36).substr(2, 9)
+}
 
-class BookUI {
-  constructor() {
-    this.addBookBtn = document.querySelector('.addBookBtn');
-    this.addNewBookDialog = document.querySelector('.add-book-dialog');
-    this.closeDialogBtn = document.querySelector('.close-dialog');
-    this.allInputs = document.querySelectorAll('.add-book-dialog input');
-    this.bookList = document.querySelector("#book-list-table");
-    this.bookListFooter = document.querySelector("#table-footer");
+// add methods to constructors
+Library.prototype.addBook = function(book) {
+  this.books.push(book);
+}
 
-    this.addBookBtn.addEventListener('click', this.addNewBook.bind(this));
-    this.addNewBookDialog.querySelector('form').addEventListener('submit', this.handleNewBookSubmit.bind(this));
-    this.closeDialogBtn.addEventListener('click', () => this.addNewBookDialog.close());
+Library.prototype.getBooks = function() {
+  return this.books;
+}
 
-    document.addEventListener("DOMContentLoaded", () => {
-      this.displayBooks();
-    });
+Book.prototype.setIsEditing = function(value) {
+  this.isEditing = value;
+}
+
+const loadUserLibrary = (() => {
+  const myLibrary = new Library();
+  
+  const book1 = new Book("Harry Potter and the Sorcerer's Stone", 'JK Rowling', 200, true);
+  const book2 = new Book("IT", 'Stephen King', 500, false);
+  // add books to library
+  myLibrary.addBook(book1);
+  myLibrary.addBook(book2);
+
+  // display the UI
+  document.addEventListener("DOMContentLoaded", () => {
+    displayBooks(myLibrary);
+
+    const addBookBtn = document.querySelector('.add-book-btn');
+    addBookBtn.addEventListener('click', () => openBookDialog(null, addBookBtn, myLibrary));
+    // addBookBtn.removeEventListener('click', openBookDialog);
+  });
+})();
+
+function displayBooks(library) {
+  const bookTable = document.querySelector("#book-list-table tbody");
+  // clear bookTable
+  bookTable.innerHTML = "";
+
+  // create book table elements for tbody
+  for (let bookData of library.getBooks()) {
+    const bookRow = document.createElement("tr");
+    bookRow.classList.add("book-item");
+    bookRow.setAttribute("data-id", bookData.id);
+
+    const titleCell = document.createElement("td");
+    titleCell.setAttribute("scope", "col");
+    titleCell.textContent = bookData.title;
+    bookRow.appendChild(titleCell);
+
+    const authorCell = document.createElement("td");
+    authorCell.setAttribute("scope", "col");
+    authorCell.textContent = bookData.author;
+    bookRow.appendChild(authorCell);
+
+    const pagesCell = document.createElement("td");
+    pagesCell.setAttribute("scope", "col");
+    pagesCell.textContent = bookData.pages;
+    bookRow.appendChild(pagesCell);
+
+    const hasReadCell = document.createElement("td");
+    hasReadCell.setAttribute("scope", "col");
+    hasReadCell.textContent = bookData.hasRead;
+    bookRow.appendChild(hasReadCell);
+
+    bookTable.appendChild(bookRow);
+
+    bookRow.addEventListener("click", openBookDialog.bind(bookData, bookData, bookRow, library));
   }
 
-  displayBooks() {
-    const tableBody = this.bookList.querySelector("tbody");
-    tableBody.innerHTML = ""; // Clear the table body
+}
 
-    let bookReadCount = 0;
-    myLibrary.forEach((book) => {
-      tableBody.innerHTML += this.createBookTableRow(book);
-      if (book.hasRead === "Yes") bookReadCount++;
-    });
+function openBookDialog(book, element, library) {
+  // console.log(element)
+  const bookDialog = document.querySelector('.book-dialog');
+  const bookDialogHeader = document.querySelector('.book-dialog h3');
+  const bookDialogClose = document.querySelector('.close-dialog');
+  const bookDialogInputs = document.querySelectorAll('.book-dialog input:not([type="radio"])');
+  const bookDialogBtns = document.querySelector('.action-btns');
+  const bookDialogContainer = document.querySelector('#dialog-container');
 
-    this.bookListFooter.innerHTML = this.createBookTableFooter(bookReadCount);
+  // check if form element already exists, if so remove it
+  const existingForm = bookDialogContainer.querySelector('form');
+  if (existingForm) {
+    existingForm.remove();
+  }
 
-    // Use event delegation for book item clicks
-    tableBody.addEventListener("click", (e) => {
-      if (e.target.closest('.book-item')) {
-        this.openEditBookDialog(e.target.closest('.book-item'));
+  // create new form element
+  const form = document.createElement('form');
+  form.appendChild(bookDialog);
+  bookDialogContainer.appendChild(form);
+  
+  // clear inputs
+  bookDialogInputs.forEach((input) => {
+    input.value = "";
+    input.required = true;
+  });
+  
+  form.removeEventListener('submit', submitNewBookForm)
+
+  if (element.nodeName !== "BUTTON") {
+    // set isEditing to true
+    book.setIsEditing(true);
+    
+    bookDialogBtns.innerHTML = "<button>Save</button>";
+    bookDialogHeader.textContent = "Edit book";
+    bookDialog.showModal();
+
+    // pre-fill inputs
+    bookDialogInputs.forEach((input, i) => {
+      switch (input.id) {
+        case "title":
+          input.value = book.title;
+          break;
+        case "author":
+          input.value = book.author;
+          break;
+        case "pages":
+          input.value = book.pages;
+          break;
+        default:
+          break;
       }
     });
-  }
 
-  addNewBook() {
-    this.addNewBookDialog.showModal();
-    this.allInputs.forEach((input) => {
-      input.value = '';
-      input.checked = false;
-    });
+    // TODO: save book
+    // Close dialog without saving
+    bookDialogClose.addEventListener('click', () => {
+      book.setIsEditing(false);
+      bookDialog.close();
+    }, { once: true });
+    return;
   }
+  else {
+    bookDialogHeader.textContent = "Add new book";
+    bookDialogBtns.innerHTML = "<button type='submit'>Add Book</button>"
+    bookDialog.showModal();    
 
-  handleNewBookSubmit(e) {
+    form.addEventListener('submit', (e) => submitNewBookForm(e, library, bookDialogInputs, bookDialog), {once: true});
+  }
+  
+  // set isEditing to false after modal closes:
+  bookDialogClose.addEventListener('click', (e) => {
     e.preventDefault();
-
-    let bookTitle, bookAuthor, bookPages, bookHasRead;
-    this.allInputs.forEach((input) => {
-      if (input.id === 'new-title') {
-        bookTitle = input.value;
-      } else if (input.id === 'new-author') {
-        bookAuthor = input.value;
-      } else if (input.id === 'new-pages') {
-        bookPages = parseInt(input.value);
-      } else if (input.type === 'radio' && input.checked) {
-        bookHasRead = input.value === 'yes';
-      }
-    });
-
-    myLibrary.push(new Book(bookTitle, bookAuthor, bookPages, bookHasRead));
-    this.addNewBookDialog.close();
-    this.displayBooks();
-  }
-
-  createBookTableRow(book) {
-    return `
-      <tr class="book-item" data-id=${book.id}>
-        <td scope="col">${book.title}</td>
-        <td scope="col">${book.author}</td>
-        <td scope="col">${book.pages}</td>
-        <td scope="col">${book.hasRead}</td>
-      </tr>
-    `;
-  }
-
-  createBookTableFooter(bookReadCount) {
-    return `
-      <tr>
-        <th scope="row" colspan="3">
-          Books Read
-          <td>${((bookReadCount / myLibrary.length) * 100).toFixed(2)}%</td>
-        </th>
-      </tr>`;
-  }
-
-  openEditBookDialog(bookToEdit) {
-    const editBookDialog = document.querySelector(".edit-book-dialog");
-    editBookDialog.showModal();
-    const closeEditBookDialog = editBookDialog.querySelector(".close-dialog");
-    const editForm = editBookDialog.querySelector("form");
-
-    closeEditBookDialog.addEventListener("click", () => editBookDialog.close());
-
-    const bookTitleInput = document.querySelector("input#title");
-    const bookAuthorInput = document.querySelector("input#author");
-    const bookPagesInput = document.querySelector("input#pages");
-    const bookHasReadInput = document.querySelectorAll('input[type="radio"]');
-    const bookHasRead = bookToEdit.querySelector('td:nth-child(4)').innerText;
-    const bookId = bookToEdit.getAttribute("data-id");
-
-    bookTitleInput.value = bookToEdit.querySelector('td:nth-child(1)').innerText;
-    bookAuthorInput.value = bookToEdit.querySelector('td:nth-child(2)').innerText;
-    bookPagesInput.value = bookToEdit.querySelector('td:nth-child(3)').innerText;
-    bookHasReadInput.forEach((input) => {
-      input.checked = input.value === bookHasRead.toLowerCase();
-    });
-
-    editForm.addEventListener("submit", (e) => {
-      e.preventDefault();
-      editBookDialog.close();
-
-      const bookHasReadInputValue = Array.from(bookHasReadInput).find((input) => input.checked).value;
-
-      myLibrary = myLibrary.map((book) => {
-        if (book.id === bookId) {
-          return new Book(
-            bookTitleInput.value,
-            bookAuthorInput.value,
-            parseInt(bookPagesInput.value),
-            bookHasReadInputValue === "yes"
-          );
-        }
-        return book;
-      });
-
-      this.displayBooks();
-    });
-  }
+    bookDialog.close();
+  });
 }
 
-new BookUI();
+function submitNewBookForm(e, library, bookInputs, bookDialog) {
+  e.preventDefault();
+
+  console.log(e.target)
+  const bookDialogRadioInputs = document.querySelectorAll('.book-dialog input[type="radio"]');
+  const radioChecked = Array.from(bookDialogRadioInputs).find((radio) => radio.checked);
+
+  // gather inputs and make new book when form submits
+  const newBook = new Book (
+    bookInputs[0].value, // title
+    bookInputs[1].value, // author
+    parseInt(bookInputs[2].value), // pages,
+    radioChecked.value === "yes" // TODO: make dynamic
+  );
+  bookDialog.close();
+  handleAddBook(newBook, library);
+}
+
+function handleAddBook(bookToAdd, library) {
+  library.addBook(bookToAdd);
+  displayBooks(library);
+}
