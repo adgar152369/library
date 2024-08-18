@@ -213,9 +213,14 @@ button#saveEditBook {
 .action-btns {
   display: flex;
   gap: 2rem;
+  text-transform: capitalize;
 }
 
-.action-btns .deleteBookBtn {
+.action-btns button{
+  text-transform: capitalize;
+}
+
+.action-btns .delete-btn {
   background: none;
   color: red;
   border: solid 2px red;
