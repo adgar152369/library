@@ -6,11 +6,34 @@ export class Library {
   }
 
   static addBook(book) {
+    const wordsToIgnore = ["the", "and", "of"];
+    const titleWords = book.title.toLowerCase().split(" ");
+    const capitalizedTitleWords = titleWords.map((word, index) => {
+      if (index === 0 || !wordsToIgnore.includes(word)) {
+      return word.charAt(0).toUpperCase() + word.slice(1);
+      } else {
+      return word;
+      }
+    });
+    const capitalizedTitle = capitalizedTitleWords.join(" ");
+    book.title = capitalizedTitle;
+
+    const authorWords = book.author.toLowerCase().split(" ");
+    const capitalizedAuthorWords = authorWords.map((word, index) => {
+      if (index === 0 || !wordsToIgnore.includes(word)) {
+      return word.charAt(0).toUpperCase() + word.slice(1);
+      } else {
+      return word;
+      }
+    });
+    const capitalizedAuthor = capitalizedAuthorWords.join(" ");
+    book.author = capitalizedAuthor;
     Library.books.push(book);
   }
 
   static deleteBook(book) {
-    const index = Library.books.findIndexOf(book);
+    console.log(Library.getBooks())
+    const index = Library.getBooks().indexOf(book);
     if (index !== -1) {
       Library.books.splice(index, 1);
     }
