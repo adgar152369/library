@@ -6,14 +6,14 @@ import { Library, Book } from "./Library.js";
     const addBookBtn = document.querySelector('.add-book-btn');
     const sortBySelect = document.querySelector('.sort-btns select');
 
-    const book1 = new Book('harry potter', 'jk rowling', 300, true);
+    /* const book1 = new Book('harry potter', 'jk rowling', 300, true);
     const book2 = new Book('the lord of the rings', 'tolkien', 1000, false);
     const book3 = new Book('game of rizz gods', 'dennis smith', 20, false);
     const book4 = new Book('game of rizz gods', 'dennis smith', 20, true);
     Library.addBook(book1)
     Library.addBook(book2)
     Library.addBook(book3);
-    Library.addBook(book4);
+    Library.addBook(book4); */
 
     addBookBtn.addEventListener('click', () => openBookDialog(null, addBookBtn));
     sortBySelect.addEventListener('change', (e) => sortBy(e));
