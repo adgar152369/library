@@ -68,31 +68,19 @@ export class Library {
   }
 
   static sortByHasRead() {
-    Library.getBooks().sort((a, b) => {
-      if (a.title < b.title) return -1;
-      else return 1;
-    });
+    Library.getBooks().sort((a, b) => b.hasRead - a.hasRead);
   }
 
   static sortByHasNotRead() {
-    Library.getBooks().sort((a, b) => {
-      if (a.title < b.title) return -1;
-      else return 1;
-    });
+    Library.getBooks().sort((a, b) => a.hasRead - b.hasRead);
   }
 
   static sortByHighestPages() {
-    Library.getBooks().sort((a, b) => {
-      if (a.title < b.title) return -1;
-      else return 1;
-    });
+    Library.getBooks().sort((a, b) => b.pages - a.pages);
   }
 
   static sortByLowestPages() {
-    Library.getBooks().sort((a, b) => {
-      if (a.title < b.title) return -1;
-      else return 1;
-    });
+    Library.getBooks().sort((a, b) => a.pages - b.pages);
   }
 }
 

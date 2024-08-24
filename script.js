@@ -9,9 +9,11 @@ import { Library, Book } from "./Library.js";
     const book1 = new Book('harry potter', 'jk rowling', 300, true);
     const book2 = new Book('the lord of the rings', 'tolkien', 1000, false);
     const book3 = new Book('game of rizz gods', 'dennis smith', 20, false);
+    const book4 = new Book('game of rizz gods', 'dennis smith', 20, true);
     Library.addBook(book1)
     Library.addBook(book2)
-    Library.addBook(book3)
+    Library.addBook(book3);
+    Library.addBook(book4);
 
     addBookBtn.addEventListener('click', () => openBookDialog(null, addBookBtn));
     sortBySelect.addEventListener('change', (e) => sortBy(e));
@@ -233,11 +235,11 @@ function addBook(inputs, bookDialog) {
 }
 
 const sortBy = (e) => {
-  if (e.target.value === 'title') Library.sortByTitle()
-  else if (e.target.value === 'author') Library.sortByAuthor()
-  else if (e.target.value === 'pages-highest') sortByPagesHighest(e);
-  else if (e.target.value === 'pages-lowest') sortByPagesLowest(e);
-  else if (e.target.value === 'has-read') sortByHasRead(e);
-  else if (e.target.value === 'has-not-read') sortByHasNotRead(e);
+  if (e.target.value === 'title') Library.sortByTitle();
+  else if (e.target.value === 'author') Library.sortByAuthor();
+  else if (e.target.value === 'has-read') Library.sortByHasRead();
+  else if (e.target.value === 'has-not-read') Library.sortByHasNotRead();
+  else if (e.target.value === 'pages-highest') Library.sortByHighestPages();
+  else if (e.target.value === 'pages-lowest') Library.sortByLowestPages();
   displayBooks();
 }
