@@ -34,7 +34,8 @@ div:has(blockquote) {
   max-width: 75%;
 }
 
-h1, h3 {
+h1,
+h3 {
   text-align: center;
   margin-block: 2rem;
 }
@@ -56,22 +57,23 @@ h1, h3 {
 }
 
 #book-list-table tfoot {
-  border-top: solid 1px rgb(198, 198, 198);;
+  border-top: solid 1px rgb(198, 198, 198);
+  ;
 }
 
 #book-list-table tfoot th {
   text-align: right;
 }
 
-#book-list-table th{
+#book-list-table th {
   text-align: left;
   border-bottom: solid 1px rgb(198, 198, 198);
   color: coral;
 }
 
-#book-list-table thead th, 
-#book-list-table tbody td, 
-#book-list-table tfoot th, 
+#book-list-table thead th,
+#book-list-table tbody td,
+#book-list-table tfoot th,
 #book-list-table tfoot td {
   padding: 10px;
 }
@@ -203,6 +205,37 @@ button#saveEditBook {
   border-color: grey;
 }
 
+/* Sort css */
+.utility-btns {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-block: 4rem 2rem;
+}
+
+.sort-btns {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+}
+
+.sort-btns label {
+  color: #737373;
+}
+
+.sort-btns select {
+  padding: 8px 0;
+  font-size: 1rem;
+  border: none;
+  border-bottom: solid 2px #737373;
+  color: teal;
+  font-weight: bolder;
+}
+
+.sort-btns select:focus {
+  outline: none;
+}
+
 
 @media (min-width: 768px) {
   dialog {
@@ -216,7 +249,7 @@ button#saveEditBook {
   text-transform: capitalize;
 }
 
-.action-btns button{
+.action-btns button {
   text-transform: capitalize;
 }
 
@@ -226,6 +259,7 @@ button#saveEditBook {
   border: solid 2px red;
   width: 25%;
 }
+
 .action-btns .readStatusBtn {
   background: none;
   color: teal;
