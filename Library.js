@@ -6,28 +6,7 @@ export class Library {
   }
 
   static addBook(book) {
-    const wordsToIgnore = ["the", "and", "of"];
-    const titleWords = book.title.toLowerCase().split(" ");
-    const capitalizedTitleWords = titleWords.map((word, index) => {
-      if (index === 0 || !wordsToIgnore.includes(word)) {
-      return word.charAt(0).toUpperCase() + word.slice(1);
-      } else {
-      return word;
-      }
-    });
-    const capitalizedTitle = capitalizedTitleWords.join(" ");
-    book.title = capitalizedTitle;
-
-    const authorWords = book.author.toLowerCase().split(" ");
-    const capitalizedAuthorWords = authorWords.map((word, index) => {
-      if (index === 0 || !wordsToIgnore.includes(word)) {
-      return word.charAt(0).toUpperCase() + word.slice(1);
-      } else {
-      return word;
-      }
-    });
-    const capitalizedAuthor = capitalizedAuthorWords.join(" ");
-    book.author = capitalizedAuthor;
+    Library.capitalizeWords(book);
     Library.books.push(book);
   }
 
@@ -46,10 +25,74 @@ export class Library {
         existingBook._author = book._author;
         existingBook._pages = book._pages;
         existingBook._hasRead = book._hasRead;
+        Library.capitalizeWords(existingBook); // Call the capitalizeWords method
       }
       return existingBook;
     });
     Library.books = updatedBooks;
+  }
+
+  static capitalizeWords(book) {
+    const wordsToIgnore = ["the", "and", "of"];
+    const titleWords = book.title.toLowerCase().split(" ");
+    const capitalizedTitleWords = titleWords.map((word, index) => {
+      if (index === 0 || !wordsToIgnore.includes(word)) {
+        return word.charAt(0).toUpperCase() + word.slice(1);
+      } else return word;
+    });
+    const capitalizedTitle = capitalizedTitleWords.join(" ");
+    book.title = capitalizedTitle;
+
+    const authorWords = book.author.toLowerCase().split(" ");
+    const capitalizedAuthorWords = authorWords.map((word, index) => {
+      if (index === 0 || !wordsToIgnore.includes(word)) {
+        return word.charAt(0).toUpperCase() + word.slice(1);
+      } else return word;  
+    });
+    const capitalizedAuthor = capitalizedAuthorWords.join(" ");
+    book.author = capitalizedAuthor;
+  }
+
+  static sortByTitle() {
+    Library.getBooks().sort((a, b) => {
+      if (a.title < b.title) return -1;
+      else return 1;
+    });
+  }
+
+  static sortByAuthor() {
+    Library.getBooks().sort((a, b) => {
+      if (a.author < b.author) return -1;
+      else return 1;
+    });
+  }
+
+  static sortByHasRead() {
+    Library.getBooks().sort((a, b) => {
+      if (a.title < b.title) return -1;
+      else return 1;
+    });
+  }
+
+  static sortByHasNotRead() {
+    Library.getBooks().sort((a, b) => {
+      if (a.title < b.title) return -1;
+      else return 1;
+    });
+  }
+
+  static sortByHighestPages() {
+    Library.getBooks().sort((a, b) => {
+      if (a.title < b.title) return -1;
+      else return 1;
+    });
+  }
+
+  static sortByLowestPages() {
+    Library.getBooks().sort((a, b) => {
+      if (a.title < b.title) return -1;
+      else return 1;
+    });
   }
 }
 

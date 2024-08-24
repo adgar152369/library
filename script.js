@@ -4,7 +4,17 @@ import { Library, Book } from "./Library.js";
 (() => {
   document.addEventListener("DOMContentLoaded", () => {
     const addBookBtn = document.querySelector('.add-book-btn');
+    const sortBySelect = document.querySelector('.sort-btns select');
+
+    const book1 = new Book('harry potter', 'jk rowling', 300, true);
+    const book2 = new Book('the lord of the rings', 'tolkien', 1000, false);
+    const book3 = new Book('game of rizz gods', 'dennis smith', 20, false);
+    Library.addBook(book1)
+    Library.addBook(book2)
+    Library.addBook(book3)
+
     addBookBtn.addEventListener('click', () => openBookDialog(null, addBookBtn));
+    sortBySelect.addEventListener('change', (e) => sortBy(e));
 
     displayBooks();
   });
@@ -18,33 +28,33 @@ function displayBooks() {
   if (emptyTableHeader) emptyTableHeader.remove();
 
   if (Library.getBooks().length !== 0) {
-    for (let bookData of Library.getBooks()) {    
+    for (let bookData of Library.getBooks()) {
       const bookRow = document.createElement("tr");
       bookRow.classList.add("book-item");
       bookRow.setAttribute("data-id", bookData.id);
-  
+
       const titleCell = document.createElement("td");
       titleCell.setAttribute("scope", "col");
       titleCell.textContent = bookData.title;
       bookRow.appendChild(titleCell);
-  
+
       const authorCell = document.createElement("td");
       authorCell.setAttribute("scope", "col");
       authorCell.textContent = bookData.author;
       bookRow.appendChild(authorCell);
-  
+
       const pagesCell = document.createElement("td");
       pagesCell.setAttribute("scope", "col");
       pagesCell.textContent = bookData.pages;
       bookRow.appendChild(pagesCell);
-  
+
       const hasReadCell = document.createElement("td");
       hasReadCell.setAttribute("scope", "col");
       hasReadCell.textContent = bookData.hasRead ? "Yes" : "No";
       bookRow.appendChild(hasReadCell);
-  
+
       bookTable.appendChild(bookRow);
-  
+
       bookRow.addEventListener("click", openBookDialog.bind(bookData, bookData, bookRow));
     }
   } else {
@@ -65,7 +75,6 @@ function displayBooks() {
  */
 function createNewForm(parent, child) {
   const existingForm = parent.querySelector('form');
-  // check if form element already exists, if so remove it
   if (existingForm) existingForm.remove();
 
   const form = document.createElement('form');
@@ -99,7 +108,7 @@ function createDialogBtns(btnTypes) {
   return bookDialogBtns;
 }
 
-function openBookDialog(book, element) {  
+function openBookDialog(book, element) {
   const bookDialog = document.querySelector('.book-dialog');
   const bookDialogHeader = document.querySelector('.book-dialog h3');
   const bookDialogClose = document.querySelector('.close-dialog');
@@ -107,18 +116,18 @@ function openBookDialog(book, element) {
   const bookDialogContainer = document.querySelector('#dialog-container');
 
   const newForm = createNewForm(bookDialogContainer, bookDialog)
-  
+
   // clear inputs
-  bookDialogInputs.forEach((input) => {    
+  bookDialogInputs.forEach((input) => {
     if (input.type === "radio") input.checked = false;
     else input.value = "";
     input.required = true;
   });
-  
-  if (book && element.nodeName !== "BUTTON") {    
+
+  if (book && element.nodeName !== "BUTTON") {
     book.isEditing = true;
     const dialogBtns = createDialogBtns(['save-btn', 'delete-btn']); // keep 
-    
+
     bookDialogHeader.textContent = "Edit book";
     bookDialog.showModal();
 
@@ -129,7 +138,7 @@ function openBookDialog(book, element) {
       } else if (!book.hasRead && input.value === 'no') {
         input.checked = true;
       }
-      
+
       switch (input.id) {
         case "title":
           input.value = book.title;
@@ -147,16 +156,16 @@ function openBookDialog(book, element) {
   } else {
     const addBtn = createDialogBtns(['add-btn']);
     bookDialogHeader.textContent = "Add new book";
-    bookDialog.showModal();    
+    bookDialog.showModal();
   }
 
   newForm.addEventListener('submit', (e) => {
-    e.preventDefault();    
+    e.preventDefault();
     const clickedButton = e.submitter;
     submitForm(
-      book, 
-      bookDialogInputs, 
-      bookDialog, 
+      book,
+      bookDialogInputs,
+      bookDialog,
       clickedButton);
   });
 
@@ -193,11 +202,11 @@ function deleteBook(book) {
     Library.deleteBook(book);
     document.querySelector('dialog').close();
     displayBooks();
-  } 
+  }
   return;
 }
 
-function updateBook(book, inputs, bookDialog) {  
+function updateBook(book, inputs, bookDialog) {
   const updatedBooks = Library.getBooks().map((existingBook) => {
     if (existingBook.id === book.id) {
       existingBook.title = inputs[0].value;
@@ -211,9 +220,9 @@ function updateBook(book, inputs, bookDialog) {
   bookDialog.close();
 }
 
-function addBook(inputs, bookDialog) {  
+function addBook(inputs, bookDialog) {
   // gather inputs and make new book when form submits
-  const newBook = new Book (
+  const newBook = new Book(
     inputs[0].value, // title
     inputs[1].value, // author
     parseInt(inputs[2].value), // pages,
@@ -221,4 +230,14 @@ function addBook(inputs, bookDialog) {
   );
   bookDialog.close();
   Library.addBook(newBook);
+}
+
+const sortBy = (e) => {
+  if (e.target.value === 'title') Library.sortByTitle()
+  else if (e.target.value === 'author') Library.sortByAuthor()
+  else if (e.target.value === 'pages-highest') sortByPagesHighest(e);
+  else if (e.target.value === 'pages-lowest') sortByPagesLowest(e);
+  else if (e.target.value === 'has-read') sortByHasRead(e);
+  else if (e.target.value === 'has-not-read') sortByHasNotRead(e);
+  displayBooks();
 }
