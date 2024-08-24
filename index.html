@@ -17,7 +17,20 @@
     </blockquote>
   </div>
 
-  <button class="add-book-btn" value="Add Book">Add Book</button>
+  <div class="utility-btns">
+    <button class="add-book-btn" value="Add Book">Add Book</button>
+    <div class="sort-btns">
+      <label for="sort-by">Sort by: </label>
+      <select name="sort" id="sort-by">
+        <option value="title" selected>Title</option>
+        <option value="author">Author</option>
+        <option value="has-read">Read</option>
+        <option value="has-not-read">Not Read</option>
+        <option value="pages-highest">Pages (highest - lowest)</option>
+        <option value="pages-lowest">Pages (lowest - highest)</option>
+      </select>
+    </div>
+  </div>
   
   <ul class="booksDisplay" id="book-list">
     
